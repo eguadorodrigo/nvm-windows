@@ -59,7 +59,7 @@ var env = &Environment{
 	arch:            os.Getenv("PROCESSOR_ARCHITECTURE"),
 	node_mirror:     "",
 	npm_mirror:      "",
-	proxy:           "none",
+	proxy:           os.Getenv("HTTPS_PROXY") == nil ? os.Getenv("HTTP_PROXY") : "none",
 	originalpath:    "",
 	originalversion: "",
 	verifyssl:       true,
@@ -1332,9 +1332,6 @@ func setup() {
 
 	if val, ok := m["proxy"]; ok {
 		if val != "none" && val != "" {
-			if strings.ToLower(val[0:4]) != "http" {
-				val = "http://" + val
-			}
 			res, err := url.Parse(val)
 			if err == nil {
 				web.SetProxy(res.String(), env.verifyssl)
